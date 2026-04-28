@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SCI Debiasing Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>SCI Debiasing Dashboard</h1>
+        <p id="dataStamp">Loading data</p>
+      </div>
+      <nav class="screen-tabs" aria-label="Dashboard screens">
+        <button class="tab is-active" type="button" data-screen="screen1">Boxplots</button>
+        <button class="tab" type="button" data-screen="screen2">Timeseries</button>
+        <button class="tab" type="button" data-screen="screen3">Diversity impact</button>
+        <button class="tab" type="button" data-screen="about">About</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="screen1" class="screen is-active">
+        <div class="toolbar">
+          <label>
+            Variable
+            <select id="screen1Variable"></select>
+          </label>
+          <label>
+            Year
+            <select id="screen1Year"></select>
+          </label>
+          <fieldset>
+            <legend>Categories</legend>
+            <div id="screen1CategoryDropdown" class="check-dropdown"></div>
+          </fieldset>
+        </div>
+        <div class="split-layout">
+          <div class="plot-panel">
+            <svg id="boxplotSvg" role="img" aria-label="Weighted and unweighted category boxplots"></svg>
+          </div>
+          <aside id="boxplotStats" class="stats-panel"></aside>
+        </div>
+      </section>
+
+      <section id="screen2" class="screen">
+        <div class="toolbar">
+          <label>
+            Category
+            <select id="screen2Category"></select>
+          </label>
+          <fieldset>
+            <legend>Variables</legend>
+            <div id="screen2VariableDropdown" class="check-dropdown check-dropdown-wide"></div>
+          </fieldset>
+          <span id="screen2Count" class="status-pill"></span>
+          <span id="screen2Warning" class="attention-banner" hidden><span class="warning-dot">!</span> Fewer than 10 scenarios selected</span>
+        </div>
+        <div id="timeseriesGrid" class="mini-grid"></div>
+      </section>
+
+      <section id="screen3" class="screen">
+        <div class="toolbar toolbar-wrap">
+          <fieldset>
+            <legend>Categories</legend>
+            <div id="screen3CategoryToggles" class="toggle-grid"></div>
+          </fieldset>
+          <div class="button-row">
+            <button type="button" id="screen3All">All</button>
+            <button type="button" id="screen3Paris">Paris aligned</button>
+          </div>
+          <label>
+            Bars
+            <select id="screen3BarMode">
+              <option value="model_family">Model family</option>
+              <option value="model_type">Model type</option>
+              <option value="project">Project</option>
+            </select>
+          </label>
+          <span id="screen3Count" class="status-pill"></span>
+        </div>
+        <div class="impact-layout">
+          <div class="plot-panel">
+            <svg id="rankSvg" role="img" aria-label="Scenario ranking impact plot"></svg>
+          </div>
+          <div class="plot-panel">
+            <svg id="barsSvg" role="img" aria-label="Weighted and unweighted database composition bars"></svg>
+          </div>
+        </div>
+        <div id="rankLegends" class="legend-layout"></div>
+        <div id="rankTables" class="table-layout"></div>
+      </section>
+
+      <section id="about" class="screen">
+        <div class="about-layout">
+          <section class="about-panel">
+            <h2>About Diversity Weighting</h2>
+            <p>
+              Diversity weighting gives more influence to scenarios that provide distinct information and less influence to scenarios that are very similar to many others in the ensemble.
+            </p>
+            <p>
+              The method compares scenario time series across selected indicators, converts pairwise distances into similarity scores, and then combines variable-level results into a composite diversity weight.
+            </p>
+            <p>
+              This dashboard shows how those weights change distributions, time-series summaries, and the balance of model families and projects in the SCI ensemble.
+            </p>
+            <a class="paper-link" href="https://doi.org/10.1038/s41558-026-02565-5" target="_blank" rel="noopener noreferrer">
+              Beath et al. (2026), Nature Climate Change
+            </a>
+          </section>
+          <section class="about-panel">
+            <h2>Reading The Views</h2>
+            <div class="about-points">
+              <div>
+                <strong>Boxplots</strong>
+                <span>Compare unweighted and weighted distributions for selected categories and years.</span>
+              </div>
+              <div>
+                <strong>Timeseries</strong>
+                <span>Track unweighted and weighted medians with uncertainty bands across the 2020-2100 grid.</span>
+              </div>
+              <div>
+                <strong>Diversity impact</strong>
+                <span>Shows how scenarios move when ranked by diversity weight, model family, and project.</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <div id="loadError" class="load-error" hidden></div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>
