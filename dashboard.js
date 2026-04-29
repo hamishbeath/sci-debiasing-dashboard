@@ -243,8 +243,7 @@ function init() {
   const requestedScreen = new URLSearchParams(window.location.search).get("screen");
   if (["screen1", "screen2", "screen3", "about"].includes(requestedScreen)) state.screen = requestedScreen;
 
-  const stamp = new Date(DATA.metadata.generated_at);
-  $("#dataStamp").textContent = `${DATA.screen3.rows.length} weighted scenarios | ${stamp.toLocaleString()}`;
+  $("#dataStamp").textContent = "343 scenarios reweighted for diversity";
 
   initNavigation();
   initScreen1Controls();
