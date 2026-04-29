@@ -522,6 +522,7 @@ function renderScreen2() {
   $("#screen2Count").textContent = `${category.label} | ${totalN} scenarios | ${variables.length} variables`;
   const warning = $("#screen2Warning");
   warning.hidden = totalN >= 10;
+  grid.classList.toggle("has-single-card", variables.length === 1);
 
   if (!variables.length) {
     grid.appendChild(node("div", { className: "empty-state" }, "Select at least one variable"));
@@ -538,15 +539,17 @@ function renderScreen2() {
     const svg = svgNode("svg", { role: "img", "aria-label": `${variable.label} timeseries` });
     card.appendChild(svg);
     grid.appendChild(card);
-    drawMiniChart(svg, summary, variable, color);
+    drawMiniChart(svg, summary, variable, color, variables.length === 1);
   });
 }
 
-function drawMiniChart(svg, summary, variable, color) {
+function drawMiniChart(svg, summary, variable, color, isLarge = false) {
   clear(svg);
-  const width = 360;
-  const height = 190;
-  const margin = { top: 10, right: 12, bottom: 30, left: 52 };
+  const width = isLarge ? 920 : 360;
+  const height = isLarge ? 420 : 190;
+  const margin = isLarge
+    ? { top: 22, right: 30, bottom: 48, left: 78 }
+    : { top: 10, right: 12, bottom: 30, left: 52 };
   setViewBox(svg, width, height);
 
   const years = DATA.metadata.years.map(Number);
@@ -570,10 +573,21 @@ function drawMiniChart(svg, summary, variable, color) {
 
   svg.appendChild(svgNode("line", { x1: margin.left, x2: width - margin.right, y1: height - margin.bottom, y2: height - margin.bottom, stroke: "#89958f", "stroke-width": 0.8 }));
   svg.appendChild(svgNode("line", { x1: margin.left, x2: margin.left, y1: margin.top, y2: height - margin.bottom, stroke: "#89958f", "stroke-width": 0.8 }));
-  svg.appendChild(svgNode("text", { x: margin.left, y: height - 8, "text-anchor": "middle", class: "tick-label" }, years[0]));
-  svg.appendChild(svgNode("text", { x: width - margin.right, y: height - 8, "text-anchor": "middle", class: "tick-label" }, years[years.length - 1]));
-  svg.appendChild(svgNode("text", { x: margin.left - 7, y: margin.top + 4, "text-anchor": "end", class: "tick-label" }, compactNumber(domain[1])));
-  svg.appendChild(svgNode("text", { x: margin.left - 7, y: height - margin.bottom + 4, "text-anchor": "end", class: "tick-label" }, compactNumber(domain[0])));
+  const yearTicks = isLarge ? years.filter((year) => year % 20 === 0 || year === years[0] || year === years[years.length - 1]) : [years[0], years[years.length - 1]];
+  yearTicks.forEach((year) => {
+    const xTick = x(year);
+    if (isLarge) {
+      svg.appendChild(svgNode("line", { x1: xTick, x2: xTick, y1: margin.top, y2: height - margin.bottom, stroke: "#dfe5e1", "stroke-width": 0.8 }));
+    }
+    svg.appendChild(svgNode("text", { x: xTick, y: height - 12, "text-anchor": "middle", class: "tick-label" }, year));
+  });
+  ticks(domain, isLarge ? 5 : 2).forEach((tick) => {
+    const yTick = y(tick);
+    if (isLarge) {
+      svg.appendChild(svgNode("line", { x1: margin.left, x2: width - margin.right, y1: yTick, y2: yTick, stroke: "#dfe5e1", "stroke-width": 0.8 }));
+    }
+    svg.appendChild(svgNode("text", { x: margin.left - 7, y: yTick + 4, "text-anchor": "end", class: "tick-label" }, compactNumber(tick)));
+  });
 
   drawArea(svg, years, summary.unweighted.q05, summary.unweighted.q95, x, y, "#5d6776", 0.12);
   drawArea(svg, years, summary.unweighted.q25, summary.unweighted.q75, x, y, "#5d6776", 0.22);

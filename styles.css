@@ -61,7 +61,7 @@ p {
 }
 
 main {
-  padding: 20px 28px 36px;
+  padding: 20px 28px 28px;
 }
 
 .screen {
@@ -185,6 +185,10 @@ svg {
   max-width: 100%;
 }
 
+.mini-card svg {
+  height: auto;
+}
+
 #boxplotSvg {
   min-height: 520px;
   min-width: 760px;
@@ -202,13 +206,29 @@ svg {
 
 .mini-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
   gap: 12px;
+}
+
+.mini-grid.has-single-card {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .mini-card {
   padding: 10px 10px 8px;
   min-width: 0;
+}
+
+.mini-grid.has-single-card .mini-card {
+  padding: 14px;
+}
+
+.mini-grid.has-single-card .mini-head {
+  min-height: 44px;
+}
+
+.mini-grid.has-single-card .mini-title {
+  font-size: 14px;
 }
 
 .empty-state {
@@ -470,6 +490,45 @@ svg {
   max-width: 72ch;
   color: var(--ink);
   line-height: 1.55;
+}
+
+.about-references {
+  grid-column: 1 / -1;
+}
+
+.site-footer {
+  margin: 0 28px 28px;
+  padding: 16px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+}
+
+.site-footer p {
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.site-footer a,
+.about-panel a {
+  color: var(--accent);
+}
+
+.reference-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.reference-list a {
+  display: inline-block;
+  margin-left: 4px;
+  overflow-wrap: anywhere;
 }
 
 .paper-link {
