@@ -78,10 +78,15 @@
               <option value="project">Project</option>
             </select>
           </label>
+          <label class="switch-control">
+            <input id="screen3HighlightExtremes" type="checkbox" checked />
+            <span>Highest and lowest weighted scenarios highlighted</span>
+          </label>
           <span id="screen3Count" class="status-pill"></span>
         </div>
         <div class="impact-layout">
           <div class="plot-panel">
+            <p class="plot-explainer">The rank plot links each scenario's model-family rank to its diversity weight and project rank, showing how representation shifts after diversity weighting.</p>
             <svg id="rankSvg" role="img" aria-label="Scenario ranking impact plot"></svg>
           </div>
           <div class="plot-panel">

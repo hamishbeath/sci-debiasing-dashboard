@@ -11,6 +11,7 @@ const state = {
   screen2Variables: new Set(),
   screen3Categories: new Set(),
   barMode: "model_family",
+  highlightExtremes: true,
 };
 
 function $(selector) {
@@ -374,6 +375,13 @@ function initScreen3Controls() {
     state.barMode = event.target.value;
     renderScreen3();
   });
+
+  const highlightToggle = $("#screen3HighlightExtremes");
+  highlightToggle.checked = state.highlightExtremes;
+  highlightToggle.addEventListener("change", (event) => {
+    state.highlightExtremes = event.target.checked;
+    renderScreen3();
+  });
 }
 
 function syncScreen3Checks() {
@@ -716,26 +724,33 @@ function drawRankPlot(rows) {
     svg.appendChild(svgNode("text", { x: xMid + 10, y: yTick + 4, class: "tick-label" }, `${label} ${weightNumber(weight)}`));
   });
 
+  const drawRow = (row, opacity, widthLine, showHighlightDot) => {
+    const yl = yRank(leftRank.get(row.id));
+    const ym = yWeight(row.weight);
+    const yr = yRank(rightRank.get(row.id));
+    const leftColor = colorFor("model_family", row.model_family);
+    const rightColor = colorFor("project", row.project);
+    svg.appendChild(svgNode("path", { d: curvePath(xLeft, yl, xMid, ym), fill: "none", stroke: leftColor, "stroke-width": widthLine, opacity }));
+    svg.appendChild(svgNode("path", { d: curvePath(xMid, ym, xRight, yr), fill: "none", stroke: rightColor, "stroke-width": widthLine, opacity }));
+    if (showHighlightDot) {
+      svg.appendChild(svgNode("circle", { cx: xMid, cy: ym, r: 2.2, fill: bottomIds.has(row.id) ? "#a50f15" : "#117733", opacity: 0.9 }));
+    }
+  };
+
   const drawRows = (highlightOnly) => {
     rows.forEach((row) => {
       const isHighlight = topIds.has(row.id) || bottomIds.has(row.id);
       if (highlightOnly !== isHighlight) return;
-      const yl = yRank(leftRank.get(row.id));
-      const ym = yWeight(row.weight);
-      const yr = yRank(rightRank.get(row.id));
-      const leftColor = colorFor("model_family", row.model_family);
-      const rightColor = colorFor("project", row.project);
-      const opacity = isHighlight ? 0.82 : 0.18;
-      const widthLine = isHighlight ? 1.25 : 0.55;
-      svg.appendChild(svgNode("path", { d: curvePath(xLeft, yl, xMid, ym), fill: "none", stroke: leftColor, "stroke-width": widthLine, opacity }));
-      svg.appendChild(svgNode("path", { d: curvePath(xMid, ym, xRight, yr), fill: "none", stroke: rightColor, "stroke-width": widthLine, opacity }));
-      if (isHighlight) {
-        svg.appendChild(svgNode("circle", { cx: xMid, cy: ym, r: 2.2, fill: bottomIds.has(row.id) ? "#a50f15" : "#117733", opacity: 0.9 }));
-      }
+      drawRow(row, isHighlight ? 0.82 : 0.18, isHighlight ? 1.25 : 0.55, isHighlight);
     });
   };
-  drawRows(false);
-  drawRows(true);
+
+  if (state.highlightExtremes) {
+    drawRows(false);
+    drawRows(true);
+  } else {
+    rows.forEach((row) => drawRow(row, 0.36, 0.75, false));
+  }
 
   svg.appendChild(svgNode("text", { x: xLeft, y: height - 36, "text-anchor": "middle", class: "tick-label" }, "Rank 1 at top"));
   svg.appendChild(svgNode("text", { x: xMid, y: height - 36, "text-anchor": "middle", class: "tick-label" }, "Scaled by weight value"));

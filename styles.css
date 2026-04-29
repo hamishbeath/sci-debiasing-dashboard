@@ -175,6 +175,13 @@ select {
   overflow-x: auto;
 }
 
+.plot-explainer {
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .stats-panel {
   padding: 12px;
 }
@@ -378,6 +385,53 @@ svg {
   min-height: 28px;
   height: 28px;
   padding: 0 12px;
+}
+
+.switch-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 36px;
+  padding-top: 18px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.switch-control input {
+  appearance: none;
+  position: relative;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #dfe5e1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.switch-control input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(20, 28, 36, 0.18);
+  transition: transform 0.15s ease;
+}
+
+.switch-control input:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.switch-control input:checked::after {
+  transform: translateX(14px);
 }
 
 .check-dropdown {
