@@ -101,37 +101,39 @@
       </section>
 
       <section id="screen3" class="screen">
-        <div class="toolbar-impact">
-          <fieldset class="impact-category-row">
-            <legend>Categories</legend>
-            <div id="screen3CategoryToggles" class="toggle-grid"></div>
-          </fieldset>
-          <div class="impact-control-row">
-            <div class="button-row">
-              <button type="button" id="screen3All">All</button>
-              <button type="button" id="screen3Paris">Paris aligned</button>
-            </div>
-            <label class="impact-bar-control">
-              Bars
-              <select id="screen3BarMode">
-                <option value="model_family">Model family</option>
-                <option value="model_type">Model type</option>
-                <option value="project">Project</option>
-              </select>
-            </label>
-            <label class="switch-control impact-switch">
-              <input id="screen3HighlightExtremes" type="checkbox" checked />
-              <span>Highest and lowest weighted scenarios highlighted</span>
-            </label>
-            <span id="screen3Count" class="status-pill"></span>
-          </div>
-        </div>
         <div class="impact-layout">
           <div class="plot-panel">
+            <div class="impact-panel-controls">
+              <div class="impact-category-row" role="group" aria-labelledby="screen3CategoriesLabel">
+                <span id="screen3CategoriesLabel" class="control-label">Categories</span>
+                <div id="screen3CategoryToggles" class="toggle-grid"></div>
+              </div>
+              <div class="impact-rank-actions">
+                <div class="button-row">
+                  <button type="button" id="screen3All">All</button>
+                  <button type="button" id="screen3Paris">Paris aligned</button>
+                </div>
+                <label class="switch-control impact-switch">
+                  <input id="screen3HighlightExtremes" type="checkbox" checked />
+                  <span>Highest and lowest weighted scenarios highlighted</span>
+                </label>
+                <span id="screen3Count" class="status-pill"></span>
+              </div>
+            </div>
             <p class="plot-explainer">The rank plot links each scenario's model-family rank to its diversity weight and project rank, showing how representation shifts after diversity weighting.</p>
             <svg id="rankSvg" role="img" aria-label="Scenario ranking impact plot"></svg>
           </div>
           <div class="plot-panel">
+            <div class="impact-panel-controls impact-panel-controls-bars">
+              <label class="impact-bar-control">
+                Bars
+                <select id="screen3BarMode">
+                  <option value="model_family">Model family</option>
+                  <option value="model_type">Model type</option>
+                  <option value="project">Project</option>
+                </select>
+              </label>
+            </div>
             <svg id="barsSvg" role="img" aria-label="Weighted and unweighted database composition bars"></svg>
           </div>
         </div>

@@ -172,38 +172,34 @@ main {
   flex-wrap: wrap;
 }
 
-.toolbar-impact {
-  display: grid;
-  justify-items: center;
-  gap: 11px;
-  margin-bottom: 16px;
+.control-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
 }
 
-.impact-category-row {
+.impact-panel-controls {
   display: grid;
-  justify-items: center;
-  gap: 7px;
-  width: 100%;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
 }
 
-.impact-category-row legend {
-  display: block;
-  width: 100%;
-  margin-bottom: 0;
-  text-align: center;
+.impact-panel-controls-bars {
+  justify-items: start;
+}
+
+.impact-category-row,
+.impact-rank-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 10px;
 }
 
 .impact-category-row .toggle-grid {
-  justify-content: center;
-}
-
-.impact-control-row {
-  display: flex;
-  align-items: end;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px 12px;
-  width: 100%;
+  justify-content: flex-start;
 }
 
 .impact-bar-control {
@@ -641,9 +637,14 @@ svg {
 }
 
 .impact-switch {
-  align-self: end;
-  max-width: 320px;
+  align-self: center;
+  max-width: 360px;
   padding-top: 0;
+}
+
+.impact-rank-actions .button-row,
+.impact-rank-actions .status-pill {
+  align-self: center;
 }
 
 .switch-control input {
@@ -1034,10 +1035,6 @@ td:last-child {
     align-items: stretch;
     flex-direction: row;
     flex-wrap: wrap;
-  }
-
-  .impact-control-row {
-    align-items: center;
   }
 
   .impact-switch {
