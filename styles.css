@@ -47,6 +47,14 @@ select {
   z-index: 10;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
 h1 {
   margin: 0;
   font-size: 24px;
@@ -79,6 +87,57 @@ main {
   background: var(--surface-alt);
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+.settings-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.icon-button:hover,
+.icon-button[aria-expanded="true"] {
+  background: var(--surface-alt);
+  border-color: var(--line-strong);
+}
+
+.icon-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.settings-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(300px, calc(100vw - 56px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  z-index: 40;
+}
+
+.settings-panel select {
+  width: 100%;
+  min-width: 0;
 }
 
 .tab,
@@ -758,6 +817,16 @@ td:last-child {
   .app-header {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .header-actions {
+    align-items: stretch;
+    justify-content: space-between;
+  }
+
+  .screen-tabs {
+    flex: 1 1 auto;
+    overflow-x: auto;
   }
 
   .split-layout,

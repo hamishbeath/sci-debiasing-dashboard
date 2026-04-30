@@ -12,12 +12,35 @@
         <h1>SCI Debiasing Dashboard</h1>
         <p id="dataStamp">343 scenarios reweighted for diversity</p>
       </div>
-      <nav class="screen-tabs" aria-label="Dashboard screens">
-        <button class="tab is-active" type="button" data-screen="screen1">Boxplots</button>
-        <button class="tab" type="button" data-screen="screen2">Timeseries</button>
-        <button class="tab" type="button" data-screen="screen3">Diversity impact</button>
-        <button class="tab" type="button" data-screen="about">About</button>
-      </nav>
+      <div class="header-actions">
+        <nav class="screen-tabs" aria-label="Dashboard screens">
+          <button class="tab is-active" type="button" data-screen="screen1">Boxplots</button>
+          <button class="tab" type="button" data-screen="screen2">Timeseries</button>
+          <button class="tab" type="button" data-screen="screen3">Diversity impact</button>
+          <button class="tab" type="button" data-screen="about">About</button>
+        </nav>
+        <div class="settings-wrap">
+          <button id="settingsButton" class="icon-button" type="button" aria-label="Settings" aria-haspopup="dialog" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3.5v3" />
+              <path d="M12 17.5v3" />
+              <path d="M4.64 6.64l2.12 2.12" />
+              <path d="M17.24 15.24l2.12 2.12" />
+              <path d="M3.5 12h3" />
+              <path d="M17.5 12h3" />
+              <path d="M4.64 17.36l2.12-2.12" />
+              <path d="M17.24 8.76l2.12-2.12" />
+              <circle cx="12" cy="12" r="3.7" />
+            </svg>
+          </button>
+          <div id="settingsPanel" class="settings-panel" role="dialog" aria-label="Dashboard settings" hidden>
+            <label for="weightingModeSelect">
+              Weighting method
+              <select id="weightingModeSelect"></select>
+            </label>
+          </div>
+        </div>
+      </div>
     </header>
 
     <main>
@@ -117,19 +140,19 @@
             </a>
           </section>
           <section class="about-panel">
-            <h2>Understanding the Data</h2>
+            <h2>Reading The Views</h2>
             <div class="about-points">
               <div>
                 <strong>Boxplots</strong>
-                <span>Compare unweighted and weighted variable distributions for selected categories and years.</span>
+                <span>Compare unweighted and weighted distributions for selected categories and years.</span>
               </div>
               <div>
                 <strong>Timeseries</strong>
-                <span>Unweighted and weighted timeseries medians with uncertainty bands 2020-2100.</span>
+                <span>Track unweighted and weighted medians with uncertainty bands across the 2020-2100 grid.</span>
               </div>
               <div>
                 <strong>Diversity impact</strong>
-                <span>Shows the impact on project and model dominance under diversity weighting.</span>
+                <span>Shows how scenarios move when ranked by diversity weight, model family, and project.</span>
               </div>
             </div>
           </section>

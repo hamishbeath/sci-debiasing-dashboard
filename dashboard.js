@@ -4,6 +4,7 @@ let DATA = null;
 
 const state = {
   screen: "screen1",
+  weightingMode: "hybrid",
   variable: null,
   year: null,
   screen1Categories: new Set(),
@@ -130,14 +131,27 @@ function colorFor(mode, value) {
   return "#909090";
 }
 
+function weightingModes() {
+  return DATA.metadata.weighting_modes || [{ id: "hybrid", label: "Hybrid" }];
+}
+
+function defaultWeightingMode() {
+  return DATA.metadata.default_weighting_mode || "hybrid";
+}
+
+function modeData() {
+  if (!DATA.modes) return DATA;
+  return DATA.modes[state.weightingMode] || DATA.modes[defaultWeightingMode()];
+}
+
 function activeRows() {
-  return DATA.screen3.rows.filter((row) => state.screen3Categories.has(row.category));
+  return modeData().screen3.rows.filter((row) => state.screen3Categories.has(row.category));
 }
 
 function categoryScenarioCount(category) {
   if (!category) return 0;
   const members = category.members || [category.id];
-  return DATA.screen3.rows.filter((row) => members.includes(row.category)).length;
+  return modeData().screen3.rows.filter((row) => members.includes(row.category)).length;
 }
 
 function isCategoryDisabled(category) {
@@ -170,6 +184,28 @@ function selectedScreen1Categories() {
 
 function selectedScreen2Variables() {
   return DATA.variables.filter((variable) => state.screen2Variables.has(variable.id));
+}
+
+function categoryById(categoryId) {
+  return DATA.metadata.categories.find((category) => category.id === categoryId) || DATA.metadata.screen1_categories.find((category) => category.id === categoryId);
+}
+
+function ensureCategorySelection(selectedSet, fallbackIds) {
+  Array.from(selectedSet).forEach((categoryId) => {
+    const category = categoryById(categoryId);
+    if (!category || isCategoryDisabled(category)) selectedSet.delete(categoryId);
+  });
+  if (!selectedSet.size) {
+    fallbackIds.forEach((categoryId) => {
+      const category = categoryById(categoryId);
+      if (category && !isCategoryDisabled(category)) selectedSet.add(categoryId);
+    });
+  }
+}
+
+function updateDataStamp() {
+  const rows = modeData().screen3.rows || [];
+  $("#dataStamp").textContent = `${rows.length} scenarios reweighted for diversity`;
 }
 
 function selectionLabel(items, selectedSet, singular, plural) {
@@ -227,9 +263,20 @@ document.addEventListener("click", () => {
     const button = dropdown.querySelector(".check-button");
     if (button) button.setAttribute("aria-expanded", "false");
   });
+  const settingsPanel = $("#settingsPanel");
+  const settingsButton = $("#settingsButton");
+  if (settingsPanel && !settingsPanel.hidden) {
+    settingsPanel.hidden = true;
+    if (settingsButton) settingsButton.setAttribute("aria-expanded", "false");
+  }
 });
 
 function init() {
+  state.weightingMode = defaultWeightingMode();
+  const params = new URLSearchParams(window.location.search);
+  const requestedMode = params.get("weighting");
+  if (weightingModes().some((mode) => mode.id === requestedMode)) state.weightingMode = requestedMode;
+
   const defaultVariable =
     DATA.variables.find((variable) => variable.id.includes("Harmonized|Emissions|Kyoto Gases")) ||
     DATA.variables.find((variable) => variable.id.includes("Kyoto Gases")) ||
@@ -241,17 +288,51 @@ function init() {
   state.screen2Variables = new Set(DATA.variables.filter(isDefaultTimeseriesVariable).map((variable) => variable.id));
   state.screen1Categories.delete("GW0");
   state.screen3Categories = new Set(enabledGwCategoryIds());
-  const requestedScreen = new URLSearchParams(window.location.search).get("screen");
+  const requestedScreen = params.get("screen");
   if (["screen1", "screen2", "screen3", "about"].includes(requestedScreen)) state.screen = requestedScreen;
 
-  $("#dataStamp").textContent = "343 scenarios reweighted for diversity";
+  updateDataStamp();
 
+  initSettingsControls();
   initNavigation();
   initScreen1Controls();
   initScreen2Controls();
   initScreen3Controls();
   setActiveScreen(state.screen);
   renderCurrentScreen();
+}
+
+function initSettingsControls() {
+  const button = $("#settingsButton");
+  const panel = $("#settingsPanel");
+  const select = $("#weightingModeSelect");
+  if (!button || !panel || !select) return;
+
+  weightingModes().forEach((mode) => {
+    const option = node("option", { value: mode.id }, mode.label);
+    if (mode.id === state.weightingMode) option.selected = true;
+    select.appendChild(option);
+  });
+
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    const willOpen = panel.hidden;
+    panel.hidden = !willOpen;
+    button.setAttribute("aria-expanded", String(willOpen));
+  });
+
+  panel.addEventListener("click", (event) => event.stopPropagation());
+
+  select.addEventListener("change", () => {
+    state.weightingMode = select.value;
+    updateDataStamp();
+    ensureCategorySelection(state.screen1Categories, DATA.metadata.screen1_default_categories || ["GW2", "GW3", "GW4", "paris_aligned"]);
+    const screen2Category = categoryById(state.screen2Category);
+    if (!screen2Category || isCategoryDisabled(screen2Category)) state.screen2Category = "paris_aligned";
+    ensureCategorySelection(state.screen3Categories, enabledGwCategoryIds());
+    refreshModeSensitiveControls();
+    renderCurrentScreen();
+  });
 }
 
 function initNavigation() {
@@ -299,27 +380,12 @@ function initScreen1Controls() {
     renderScreen1();
   });
 
-  buildCheckedDropdown({
-    container: $("#screen1CategoryDropdown"),
-    items: DATA.metadata.screen1_categories.map((category) => ({
-      id: category.id,
-      label: category.label,
-      disabled: isCategoryDisabled(category),
-    })),
-    selectedSet: state.screen1Categories,
-    singular: "category",
-    plural: "categories",
-    onChange: renderScreen1,
-  });
+  refreshScreen1CategoryDropdown();
 }
 
 function initScreen2Controls() {
   const select = $("#screen2Category");
-  DATA.metadata.categories.forEach((category) => {
-    const option = node("option", { value: category.id, disabled: isCategoryDisabled(category) ? "disabled" : null }, category.label);
-    if (category.id === state.screen2Category) option.selected = true;
-    select.appendChild(option);
-  });
+  refreshScreen2CategorySelect();
   select.addEventListener("change", () => {
     state.screen2Category = select.value;
     renderScreen2();
@@ -340,24 +406,7 @@ function initScreen2Controls() {
 }
 
 function initScreen3Controls() {
-  const toggles = $("#screen3CategoryToggles");
-  DATA.metadata.categories
-    .filter((category) => category.id.startsWith("GW"))
-    .forEach((category) => {
-      const disabled = isCategoryDisabled(category);
-      const input = node("input", { type: "checkbox", value: category.id, disabled: disabled ? "disabled" : null });
-      input.checked = state.screen3Categories.has(category.id);
-      input.addEventListener("change", () => {
-        if (disabled) return;
-        if (input.checked) state.screen3Categories.add(category.id);
-        else state.screen3Categories.delete(category.id);
-        renderScreen3();
-      });
-      const label = node("label", { className: disabled ? "is-disabled" : null, title: disabled ? "No scenarios available" : null });
-      label.appendChild(input);
-      label.appendChild(node("span", {}, category.label));
-      toggles.appendChild(label);
-    });
+  refreshScreen3CategoryToggles();
 
   $("#screen3All").addEventListener("click", () => {
     state.screen3Categories = new Set(enabledGwCategoryIds());
@@ -384,6 +433,60 @@ function initScreen3Controls() {
   });
 }
 
+function refreshScreen1CategoryDropdown() {
+  buildCheckedDropdown({
+    container: $("#screen1CategoryDropdown"),
+    items: DATA.metadata.screen1_categories.map((category) => ({
+      id: category.id,
+      label: category.label,
+      disabled: isCategoryDisabled(category),
+    })),
+    selectedSet: state.screen1Categories,
+    singular: "category",
+    plural: "categories",
+    onChange: renderScreen1,
+  });
+}
+
+function refreshScreen2CategorySelect() {
+  const select = $("#screen2Category");
+  clear(select);
+  DATA.metadata.categories.forEach((category) => {
+    const option = node("option", { value: category.id, disabled: isCategoryDisabled(category) ? "disabled" : null }, category.label);
+    if (category.id === state.screen2Category) option.selected = true;
+    select.appendChild(option);
+  });
+  select.value = state.screen2Category;
+}
+
+function refreshScreen3CategoryToggles() {
+  const toggles = $("#screen3CategoryToggles");
+  clear(toggles);
+  DATA.metadata.categories
+    .filter((category) => category.id.startsWith("GW"))
+    .forEach((category) => {
+      const disabled = isCategoryDisabled(category);
+      const input = node("input", { type: "checkbox", value: category.id, disabled: disabled ? "disabled" : null });
+      input.checked = state.screen3Categories.has(category.id);
+      input.addEventListener("change", () => {
+        if (disabled) return;
+        if (input.checked) state.screen3Categories.add(category.id);
+        else state.screen3Categories.delete(category.id);
+        renderScreen3();
+      });
+      const label = node("label", { className: disabled ? "is-disabled" : null, title: disabled ? "No scenarios available" : null });
+      label.appendChild(input);
+      label.appendChild(node("span", {}, category.label));
+      toggles.appendChild(label);
+    });
+}
+
+function refreshModeSensitiveControls() {
+  refreshScreen1CategoryDropdown();
+  refreshScreen2CategorySelect();
+  refreshScreen3CategoryToggles();
+}
+
 function syncScreen3Checks() {
   document.querySelectorAll("#screen3CategoryToggles input").forEach((input) => {
     input.checked = state.screen3Categories.has(input.value);
@@ -403,7 +506,8 @@ function renderScreen1() {
   clear(statsPanel);
 
   const variable = DATA.variables.find((item) => item.id === state.variable);
-  const yearStats = DATA.screen1[state.variable].years[state.year];
+  const screen1Data = modeData().screen1[state.variable];
+  const yearStats = screen1Data.years[state.year];
   const categories = selectedScreen1Categories();
   const width = Math.max(920, categories.length * 132 + 120);
   const height = 520;
@@ -432,7 +536,7 @@ function renderScreen1() {
   const xStep = usableWidth / categories.length;
 
   svg.appendChild(svgNode("text", { x: margin.left, y: 24, class: "plot-title" }, `${variable.label} (${state.year})`));
-  svg.appendChild(svgNode("text", { x: margin.left, y: 43, class: "axis-label" }, DATA.screen1[state.variable].unit || variable.unit || ""));
+  svg.appendChild(svgNode("text", { x: margin.left, y: 43, class: "axis-label" }, screen1Data.unit || variable.unit || ""));
 
   ticks(domain).forEach((tick) => {
     const yTick = y(tick);
@@ -523,7 +627,7 @@ function renderScreen2() {
   clear(grid);
   const category = DATA.metadata.categories.find((item) => item.id === state.screen2Category);
   const color = timeseriesWeightColor(category.id);
-  const dataForCategory = DATA.screen2[state.screen2Category];
+  const dataForCategory = modeData().screen2[state.screen2Category];
   const totalN = categoryScenarioCount(category);
   const variables = selectedScreen2Variables();
   $("#screen2Count").textContent = `${category.label} | ${totalN} scenarios | ${variables.length} variables`;

@@ -15,6 +15,8 @@ https://hamishbeath.github.io/sci-debiasing-dashboard/
 - `dashboard.js` - browser-side dashboard logic.
 - `dashboard_data.json` - generated data bundle used by the dashboard.
 
+The settings menu switches between Model Agnostic, Model Separate, and Hybrid diversity weights. Hybrid is the default and preserves the original view.
+
 The dashboard is fully static and does not require a Python server once published.
 
 ## Updating The Dashboard
