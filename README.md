@@ -1,4 +1,4 @@
-# SCI Debiasing Dashboard
+# SCI Weighting Dashboard
 
 Static dashboard for exploring how diversity weighting affects SCI scenario distributions, time-series summaries, and database composition.
 
