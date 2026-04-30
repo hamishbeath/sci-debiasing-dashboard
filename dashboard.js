@@ -217,7 +217,10 @@ function selectionLabel(items, selectedSet, singular, plural) {
 
 function buildCheckedDropdown({ container, items, selectedSet, singular, plural, onChange }) {
   clear(container);
-  container.addEventListener("click", (event) => event.stopPropagation());
+  if (!container.dataset.dropdownBound) {
+    container.addEventListener("click", (event) => event.stopPropagation());
+    container.dataset.dropdownBound = "true";
+  }
   const button = node("button", { type: "button", className: "check-button", "aria-expanded": "false" });
   const menu = node("div", { className: "check-menu" });
 
@@ -406,7 +409,7 @@ function initScreen2Controls() {
 }
 
 function initScreen3Controls() {
-  refreshScreen3CategoryToggles();
+  refreshScreen3CategoryDropdown();
 
   $("#screen3All").addEventListener("click", () => {
     state.screen3Categories = new Set(enabledGwCategoryIds());
@@ -459,38 +462,32 @@ function refreshScreen2CategorySelect() {
   select.value = state.screen2Category;
 }
 
-function refreshScreen3CategoryToggles() {
-  const toggles = $("#screen3CategoryToggles");
-  clear(toggles);
-  DATA.metadata.categories
-    .filter((category) => category.id.startsWith("GW"))
-    .forEach((category) => {
-      const disabled = isCategoryDisabled(category);
-      const input = node("input", { type: "checkbox", value: category.id, disabled: disabled ? "disabled" : null });
-      input.checked = state.screen3Categories.has(category.id);
-      input.addEventListener("change", () => {
-        if (disabled) return;
-        if (input.checked) state.screen3Categories.add(category.id);
-        else state.screen3Categories.delete(category.id);
-        renderScreen3();
-      });
-      const label = node("label", { className: disabled ? "is-disabled" : null, title: disabled ? "No scenarios available" : null });
-      label.appendChild(input);
-      label.appendChild(node("span", {}, category.label));
-      toggles.appendChild(label);
-    });
+function refreshScreen3CategoryDropdown() {
+  buildCheckedDropdown({
+    container: $("#screen3CategoryDropdown"),
+    items: DATA.metadata.categories
+      .filter((category) => category.id.startsWith("GW"))
+      .map((category) => ({
+        id: category.id,
+        label: category.label,
+        disabled: isCategoryDisabled(category),
+        title: isCategoryDisabled(category) ? "No scenarios available" : category.label,
+      })),
+    selectedSet: state.screen3Categories,
+    singular: "category",
+    plural: "categories",
+    onChange: renderScreen3,
+  });
 }
 
 function refreshModeSensitiveControls() {
   refreshScreen1CategoryDropdown();
   refreshScreen2CategorySelect();
-  refreshScreen3CategoryToggles();
+  refreshScreen3CategoryDropdown();
 }
 
 function syncScreen3Checks() {
-  document.querySelectorAll("#screen3CategoryToggles input").forEach((input) => {
-    input.checked = state.screen3Categories.has(input.value);
-  });
+  refreshScreen3CategoryDropdown();
 }
 
 function renderCurrentScreen() {

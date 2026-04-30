@@ -198,8 +198,11 @@ main {
   gap: 8px 10px;
 }
 
-.impact-category-row .toggle-grid {
-  justify-content: flex-start;
+.impact-category-dropdown {
+  flex: 0 1 250px;
+  min-width: 210px;
+  max-width: 300px;
+  margin-top: 0;
 }
 
 .impact-bar-control {
@@ -575,35 +578,10 @@ svg {
   font-weight: 700;
 }
 
-.toggle-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.toggle-grid label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 30px;
-  padding: 0 9px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--ink);
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.toggle-grid label.is-disabled,
 .check-menu label.is-disabled {
   color: #98a29b;
   background: #f3f5f2;
   cursor: not-allowed;
-}
-
-.toggle-grid input {
-  accent-color: var(--accent);
 }
 
 .button-row {
