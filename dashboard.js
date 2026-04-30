@@ -504,6 +504,7 @@ function renderScreen1() {
   const statsPanel = $("#boxplotStats");
   clear(svg);
   clear(statsPanel);
+  statsPanel.appendChild(boxplotLegend());
 
   const variable = DATA.variables.find((item) => item.id === state.variable);
   const screen1Data = modeData().screen1[state.variable];
@@ -557,7 +558,6 @@ function renderScreen1() {
     statsPanel.appendChild(statBlock(category, summary));
   });
 
-  drawBoxLegend(svg, width - 260, 28);
 }
 
 function drawBoxPair(svg, summary, xCenter, y, color) {
@@ -592,13 +592,23 @@ function drawWarning(svg, x, y) {
   svg.appendChild(svgNode("text", { x, y: y + 5, "text-anchor": "middle", "font-size": 12, "font-weight": 900, fill: "#241a00" }, "!"));
 }
 
-function drawBoxLegend(svg, x, y) {
-  svg.appendChild(svgNode("rect", { x, y: y + 7, width: 24, height: 12, fill: "#6e7681", opacity: 0.24 }));
-  svg.appendChild(svgNode("line", { x1: x - 2, x2: x + 26, y1: y + 13, y2: y + 13, stroke: "#111820", "stroke-width": 1.2 }));
-  svg.appendChild(svgNode("text", { x: x + 36, y: y + 17, class: "tick-label" }, "Unweighted"));
-  svg.appendChild(svgNode("rect", { x: x + 124, y: y + 7, width: 24, height: 12, fill: "#117733", opacity: 0.48 }));
-  svg.appendChild(svgNode("line", { x1: x + 122, x2: x + 150, y1: y + 13, y2: y + 13, stroke: "#111820", "stroke-width": 1.2 }));
-  svg.appendChild(svgNode("text", { x: x + 160, y: y + 17, class: "tick-label" }, "Weighted"));
+function boxplotLegend() {
+  const key = node("section", { className: "distribution-key boxplot-key", "aria-label": "Boxplot distribution key" });
+  key.appendChild(node("h2", { className: "distribution-key-heading" }, "Boxplot key"));
+  const items = node("div", { className: "distribution-key-items" });
+  items.appendChild(distributionKeyItem("distribution-sample-median", "Median line"));
+  items.appendChild(distributionKeyItem("distribution-sample-iqr", "Interquartile range"));
+  items.appendChild(distributionKeyItem("distribution-sample-outer", "5th/95th percentile range"));
+  key.appendChild(items);
+  key.appendChild(node("p", { className: "distribution-key-note" }, "Each pair shows unweighted left and weighted right."));
+  return key;
+}
+
+function distributionKeyItem(sampleClass, label) {
+  const item = node("span", { className: "distribution-key-item" });
+  item.appendChild(node("span", { className: `distribution-sample ${sampleClass}`, "aria-hidden": "true" }));
+  item.appendChild(node("span", {}, label));
+  return item;
 }
 
 function statBlock(category, summary) {
@@ -630,6 +640,8 @@ function renderScreen2() {
   const dataForCategory = modeData().screen2[state.screen2Category];
   const totalN = categoryScenarioCount(category);
   const variables = selectedScreen2Variables();
+  const legend = $("#timeseriesLegend");
+  if (legend) legend.style.setProperty("--weighted-color", color);
   $("#screen2Count").textContent = `${category.label} | ${totalN} scenarios | ${variables.length} variables`;
   const warning = $("#screen2Warning");
   warning.hidden = totalN >= 10;
@@ -701,6 +713,7 @@ function drawMiniChart(svg, summary, variable, color, isLarge = false) {
   });
 
   drawArea(svg, years, summary.unweighted.q05, summary.unweighted.q95, x, y, "#5d6776", 0.12);
+  drawArea(svg, years, summary.weighted.q05, summary.weighted.q95, x, y, color, 0.12);
   drawArea(svg, years, summary.unweighted.q25, summary.unweighted.q75, x, y, "#5d6776", 0.22);
   drawArea(svg, years, summary.weighted.q25, summary.weighted.q75, x, y, color, 0.28);
   drawLineSegments(svg, years, summary.unweighted.q50, x, y, { stroke: "#111820", "stroke-width": 1.1, "stroke-dasharray": "4 3", fill: "none" });

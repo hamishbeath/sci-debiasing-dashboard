@@ -79,6 +79,17 @@
           </fieldset>
           <span id="screen2Count" class="status-pill"></span>
           <span id="screen2Warning" class="attention-banner" hidden><span class="warning-dot">!</span> Fewer than 10 scenarios selected</span>
+          <div id="timeseriesLegend" class="distribution-key distribution-key-timeseries" aria-label="Timeseries distribution key">
+            <span class="distribution-key-heading">Timeseries key</span>
+            <div class="distribution-key-items">
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-line distribution-sample-line-unweighted" aria-hidden="true"></span>Unweighted median</span>
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-band distribution-sample-unweighted-iqr" aria-hidden="true"></span>Unweighted interquartile range</span>
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-band distribution-sample-unweighted-outer" aria-hidden="true"></span>Unweighted 5th/95th percentile range</span>
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-line distribution-sample-line-weighted" aria-hidden="true"></span>Weighted median</span>
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-band distribution-sample-weighted-iqr" aria-hidden="true"></span>Weighted interquartile range</span>
+              <span class="distribution-key-item"><span class="distribution-sample distribution-sample-band distribution-sample-weighted-outer" aria-hidden="true"></span>Weighted 5th/95th percentile range</span>
+            </div>
+          </div>
         </div>
         <div id="timeseriesGrid" class="mini-grid"></div>
       </section>
