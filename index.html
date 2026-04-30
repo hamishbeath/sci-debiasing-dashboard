@@ -104,20 +104,22 @@
         <div class="impact-layout">
           <div class="plot-panel">
             <div class="impact-panel-controls">
-              <div class="impact-category-row" role="group" aria-labelledby="screen3CategoriesLabel">
-                <span id="screen3CategoriesLabel" class="control-label">Categories</span>
-                <div id="screen3CategoryDropdown" class="check-dropdown impact-category-dropdown"></div>
+              <div class="impact-rank-control-grid">
+                <div class="impact-category-control" role="group" aria-labelledby="screen3CategoriesLabel">
+                  <span id="screen3CategoriesLabel" class="control-label">Categories</span>
+                  <div id="screen3CategoryDropdown" class="check-dropdown impact-category-dropdown"></div>
+                </div>
+                <div class="impact-rank-actions">
+                  <div class="button-row">
+                    <button type="button" id="screen3All">All</button>
+                    <button type="button" id="screen3Paris">Paris aligned</button>
+                  </div>
+                  <span id="screen3Count" class="status-pill"></span>
+                </div>
                 <label class="switch-control impact-switch">
                   <input id="screen3HighlightExtremes" type="checkbox" checked />
                   <span>Highest and lowest weighted scenarios highlighted</span>
                 </label>
-              </div>
-              <div class="impact-rank-actions">
-                <div class="button-row">
-                  <button type="button" id="screen3All">All</button>
-                  <button type="button" id="screen3Paris">Paris aligned</button>
-                </div>
-                <span id="screen3Count" class="status-pill"></span>
               </div>
             </div>
             <p class="plot-explainer">The rank plot links each scenario's model-family rank to its diversity weight and project rank, showing how representation shifts after diversity weighting.</p>
