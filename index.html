@@ -101,28 +101,30 @@
       </section>
 
       <section id="screen3" class="screen">
-        <div class="toolbar toolbar-wrap">
-          <fieldset>
+        <div class="toolbar-impact">
+          <fieldset class="impact-category-row">
             <legend>Categories</legend>
             <div id="screen3CategoryToggles" class="toggle-grid"></div>
           </fieldset>
-          <div class="button-row">
-            <button type="button" id="screen3All">All</button>
-            <button type="button" id="screen3Paris">Paris aligned</button>
+          <div class="impact-control-row">
+            <div class="button-row">
+              <button type="button" id="screen3All">All</button>
+              <button type="button" id="screen3Paris">Paris aligned</button>
+            </div>
+            <label class="impact-bar-control">
+              Bars
+              <select id="screen3BarMode">
+                <option value="model_family">Model family</option>
+                <option value="model_type">Model type</option>
+                <option value="project">Project</option>
+              </select>
+            </label>
+            <label class="switch-control impact-switch">
+              <input id="screen3HighlightExtremes" type="checkbox" checked />
+              <span>Highest and lowest weighted scenarios highlighted</span>
+            </label>
+            <span id="screen3Count" class="status-pill"></span>
           </div>
-          <label>
-            Bars
-            <select id="screen3BarMode">
-              <option value="model_family">Model family</option>
-              <option value="model_type">Model type</option>
-              <option value="project">Project</option>
-            </select>
-          </label>
-          <label class="switch-control">
-            <input id="screen3HighlightExtremes" type="checkbox" checked />
-            <span>Highest and lowest weighted scenarios highlighted</span>
-          </label>
-          <span id="screen3Count" class="status-pill"></span>
         </div>
         <div class="impact-layout">
           <div class="plot-panel">

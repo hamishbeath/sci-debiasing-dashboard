@@ -172,6 +172,50 @@ main {
   flex-wrap: wrap;
 }
 
+.toolbar-impact {
+  display: grid;
+  justify-items: center;
+  gap: 11px;
+  margin-bottom: 16px;
+}
+
+.impact-category-row {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  width: 100%;
+}
+
+.impact-category-row legend {
+  display: block;
+  width: 100%;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.impact-category-row .toggle-grid {
+  justify-content: center;
+}
+
+.impact-control-row {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+  width: 100%;
+}
+
+.impact-bar-control {
+  display: grid;
+  gap: 6px;
+}
+
+.impact-bar-control select {
+  margin-top: 0;
+  min-width: 180px;
+}
+
 .toolbar-timeseries {
   align-items: stretch;
 }
@@ -596,6 +640,12 @@ svg {
   cursor: pointer;
 }
 
+.impact-switch {
+  align-self: end;
+  max-width: 320px;
+  padding-top: 0;
+}
+
 .switch-control input {
   appearance: none;
   position: relative;
@@ -984,6 +1034,14 @@ td:last-child {
     align-items: stretch;
     flex-direction: row;
     flex-wrap: wrap;
+  }
+
+  .impact-control-row {
+    align-items: center;
+  }
+
+  .impact-switch {
+    max-width: none;
   }
 
   .timeseries-control-stack,
