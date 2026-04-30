@@ -172,6 +172,33 @@ main {
   flex-wrap: wrap;
 }
 
+.toolbar-timeseries {
+  align-items: stretch;
+}
+
+.timeseries-control-stack {
+  display: grid;
+  gap: 10px;
+  flex: 0 0 290px;
+}
+
+.timeseries-key-stack {
+  display: grid;
+  align-content: end;
+  gap: 8px;
+  flex: 1 1 540px;
+  min-width: 0;
+}
+
+.timeseries-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 30px;
+}
+
 label,
 fieldset {
   color: var(--muted);
@@ -257,12 +284,10 @@ select {
 
 .distribution-key-timeseries {
   --weighted-color: var(--accent);
-  align-self: end;
-  flex: 1 1 560px;
-  max-width: 760px;
-  min-width: min(560px, 100%);
-  margin-left: auto;
-  padding: 8px 10px;
+  width: 100%;
+  max-width: 640px;
+  justify-self: end;
+  padding: 7px 10px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
@@ -283,7 +308,7 @@ select {
 
 .distribution-key-timeseries .distribution-key-items {
   grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 7px 12px;
+  gap: 6px 12px;
 }
 
 .distribution-key-item {
@@ -298,6 +323,7 @@ select {
 }
 
 .distribution-sample {
+  display: block;
   flex: 0 0 34px;
   width: 34px;
 }
@@ -315,7 +341,9 @@ select {
   border-top-color: var(--weighted-color);
 }
 
-.distribution-sample-band {
+.distribution-sample-band,
+.distribution-sample-iqr,
+.distribution-sample-outer {
   height: 15px;
   border-radius: 3px;
   border: 1px solid transparent;
@@ -690,9 +718,9 @@ svg {
 
 .about-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  max-width: 1180px;
+  width: 100%;
 }
 
 .about-panel {
@@ -952,18 +980,51 @@ td:last-child {
     flex-direction: column;
   }
 
+  .toolbar-timeseries {
+    align-items: stretch;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .timeseries-control-stack,
+  .timeseries-key-stack {
+    flex-basis: 290px;
+  }
+
+  .timeseries-key-stack {
+    flex: 1 1 520px;
+  }
+
+  .timeseries-status-row {
+    justify-content: flex-start;
+  }
+
   .distribution-key-timeseries {
     max-width: none;
-    min-width: 0;
-    margin-left: 0;
+    justify-self: stretch;
   }
 
   .distribution-key-timeseries .distribution-key-items {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, minmax(135px, 1fr));
   }
 
   select {
     width: 100%;
     max-width: 100%;
+  }
+}
+
+@media (max-width: 740px) {
+  .toolbar-timeseries {
+    flex-direction: column;
+  }
+
+  .timeseries-control-stack,
+  .timeseries-key-stack {
+    flex-basis: auto;
+  }
+
+  .distribution-key-timeseries .distribution-key-items {
+    grid-template-columns: 1fr;
   }
 }
